@@ -11,4 +11,8 @@ import { ProductListComponent } from './products/components/product-list/product
     <app-product-list></app-product-list>
   `,
 })
-export class AppComponent {}
+export class AppComponent {
+  title(title: any) {
+    throw new Error('Method not implemented.');
+  }
+}
