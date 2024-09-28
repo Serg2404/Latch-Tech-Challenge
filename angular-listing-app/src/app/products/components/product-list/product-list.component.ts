@@ -18,6 +18,7 @@ class ProductListComponent implements OnInit {
   filterCategory = '';
   searchTerm = '';
   totalItems = 0;
+  pageSizeOptions = [5, 10, 20, 50];
 
   constructor(private productService: ProductService) {}
 
@@ -32,7 +33,6 @@ class ProductListComponent implements OnInit {
   filterAndPaginate() {
     const filtered = this.products
       .filter(p => p.category.includes(this.filterCategory) && p.name.toLowerCase().includes(this.searchTerm.toLowerCase()));
-    
     this.totalItems = filtered.length;
     const startIndex = (this.currentPage - 1) * this.pageSize;
     this.filteredProducts = filtered.slice(startIndex, startIndex + this.pageSize);
@@ -40,6 +40,12 @@ class ProductListComponent implements OnInit {
 
   onPageChange(newPage: number) {
     this.currentPage = newPage;
+    this.filterAndPaginate();
+  }
+
+  onPageSizeChange(newSize: number) {
+    this.pageSize = newSize;
+    this.currentPage = 1;
     this.filterAndPaginate();
   }
 }
