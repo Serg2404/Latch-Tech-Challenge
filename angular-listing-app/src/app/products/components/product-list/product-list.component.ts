@@ -17,19 +17,25 @@ class ProductListComponent implements OnInit {
   pageSize = 10;
   filterCategory = '';
   searchTerm = '';
+  totalItems = 0;
 
   constructor(private productService: ProductService) {}
 
   ngOnInit() {
     this.productService.getProducts().subscribe((data: Product[]) => {
       this.products = data;
+      this.totalItems = this.products.length;
       this.filterAndPaginate();
     });
   }
 
   filterAndPaginate() {
-    this.filteredProducts = this.products
+    const filtered = this.products
       .filter(p => p.category.includes(this.filterCategory) && p.name.toLowerCase().includes(this.searchTerm.toLowerCase()));
+    
+    this.totalItems = filtered.length;
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    this.filteredProducts = filtered.slice(startIndex, startIndex + this.pageSize);
   }
 
   onPageChange(newPage: number) {
