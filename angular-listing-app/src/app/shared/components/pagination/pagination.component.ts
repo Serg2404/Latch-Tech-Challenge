@@ -1,6 +1,40 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+/**
+ * @fileoverview PaginationComponent is a reusable Angular component that provides
+ * pagination controls for navigating through a list of items.
+ * 
+ * @component
+ * @selector app-pagination
+ * @standalone true
+ * @imports CommonModule
+ * 
+ * @description
+ * This component includes buttons for navigating to the previous and next pages,
+ * an input for directly entering a page number, and a select dropdown for changing
+ * the page size. It also displays the current page, total pages, and the range of
+ * items being shown.
+ * 
+ * @inputs
+ * - `currentPage: number` - The current page number (default: 1).
+ * - `pageSize: number` - The number of items per page (default: 1).
+ * - `totalItems: number` - The total number of items.
+ * - `pageSizeOptions: number[]` - The available page size options (default: [5, 10, 20, 50]).
+ * 
+ * @outputs
+ * - `pageChange: EventEmitter<number>` - Emits the new page number when the page changes.
+ * - `pageSizeChange: EventEmitter<number>` - Emits the new page size when the page size changes.
+ * 
+ * @methods
+ * - `get totalPages(): number` - Calculates the total number of pages.
+ * - `get startItem(): number` - Calculates the index of the first item on the current page.
+ * - `get endItem(): number` - Calculates the index of the last item on the current page.
+ * - `onPrevious()` - Navigates to the previous page if not on the first page.
+ * - `onNext()` - Navigates to the next page if not on the last page.
+ * - `onPageInputChange(event: Event)` - Handles changes to the page number input.
+ * - `onPageSizeChange(event: Event)` - Handles changes to the page size select dropdown.
+ */
 @Component({
     selector: 'app-pagination',
     standalone: true,
@@ -13,6 +47,7 @@ import { CommonModule } from '@angular/common';
         <select (change)="onPageSizeChange($event)">
             <option *ngFor="let size of pageSizeOptions" [value]="size" [selected]="size === pageSize">{{ size }}</option>
         </select>
+        <span>Showing {{ startItem }} to {{ endItem }} of {{ totalItems }} items</span>
     `
 })
 class PaginationComponent {
@@ -23,22 +58,65 @@ class PaginationComponent {
     @Output() pageChange = new EventEmitter<number>();
     @Output() pageSizeChange = new EventEmitter<number>();
 
+    /**
+     * Gets the total number of pages based on the total number of items and the page size.
+     * 
+     * @returns {number} The total number of pages.
+     */
     get totalPages(): number {
         return Math.ceil(this.totalItems / this.pageSize);
     }
 
+    /**
+     * Gets the index of the first item on the current page.
+     * 
+     * @returns The index of the first item, calculated based on the current page and page size.
+     */
+    get startItem(): number {
+        return (this.currentPage - 1) * this.pageSize + 1;
+    }
+
+    /**
+     * Gets the index of the last item on the current page.
+     * 
+     * @returns {number} The index of the last item on the current page, 
+     * which is the smaller value between the total number of items and 
+     * the product of the current page number and the page size.
+     */
+    get endItem(): number {
+        return Math.min(this.currentPage * this.pageSize, this.totalItems);
+    }
+
+    /**
+     * Navigates to the previous page if the current page is greater than 1.
+     * Emits the page change event with the new page number.
+     */
     onPrevious() {
         if (this.currentPage > 1) {
             this.pageChange.emit(this.currentPage - 1);
         }
     }
 
+    /**
+     * Advances to the next page if the current page is less than the total number of pages.
+     * Emits the new page number through the `pageChange` event emitter.
+     */
     onNext() {
         if (this.currentPage < this.totalPages) {
             this.pageChange.emit(this.currentPage + 1);
         }
     }
 
+    /**
+     * Handles the change event for the page input field.
+     * 
+     * This method is triggered when the user changes the value in the page input field.
+     * It validates the input to ensure it is within the valid page range. If the input
+     * is valid, it emits the new page number. If the input is invalid, it resets the 
+     * input field to the current page number.
+     * 
+     * @param event - The input change event.
+     */
     onPageInputChange(event: Event) {
         const input = event.target as HTMLInputElement;
         let page = Number(input.value);
@@ -49,6 +127,15 @@ class PaginationComponent {
         }
     }
 
+    /**
+     * Handles the change in page size from a select element.
+     * 
+     * @param event - The event triggered by changing the select element's value.
+     * 
+     * This method updates the `pageSize` property with the new size, emits the 
+     * `pageSizeChange` event with the new size, and resets the current page to the 
+     * first page by emitting the `pageChange` event with a value of 1.
+     */
     onPageSizeChange(event: Event) {
         const select = event.target as HTMLSelectElement;
         const newSize = Number(select.value);
