@@ -1,0 +1,33 @@
+<div class="filter-component">
+    <h3>{{ title }}</h3>
+    
+
+    <div *ngIf="filterType === 'value'">
+        <label for="filterValue">Value:</label>
+        <input id="filterValue" type="text" [(ngModel)]="filterValue" (input)="onFilterChange()" />
+    </div>
+
+    <div *ngIf="filterType === 'range'">
+        <label for="filterMin">Min:</label>
+        <input id="filterMin" type="number" [(ngModel)]="filterMin" (input)="onRangeChange(filterMin, filterMax)" />
+        <label for="filterMax">Max:</label>
+        <input id="filterMax" type="number" [(ngModel)]="filterMax" (input)="onRangeChange(filterMin, filterMax)" />
+    </div>
+
+    <div *ngIf="filterType === 'greater'">
+        <label for="filterGreater">Greater than:</label>
+        <input id="filterGreater" type="number" [(ngModel)]="filterGreater" (input)="onFilterChange()" />
+    </div>
+
+    <div *ngIf="filterType === 'smaller'">
+        <label for="filterSmaller">Smaller than:</label>
+        <input id="filterSmaller" type="number" [(ngModel)]="filterSmaller" (input)="onFilterChange()" />
+    </div>
+    <div *ngIf="filterType === 'multiselect'">
+        <label>Multiselect Options:</label>
+        <div *ngFor="let option of multiselectOptions">
+            <input type="checkbox" [id]="option" #checkbox (change)="onMultiselectChange(option, checkbox.checked)" />
+            <label [for]="option">{{ option }}</label>
+        </div>
+    </div>
+</div>

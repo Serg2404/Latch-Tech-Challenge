@@ -26,22 +26,22 @@ import { PRODUCTS } from '../../mocks/products.mock';
     providedIn: 'root'
 })
 class ProductService {
-  constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) { }
 
-  // For mock data
-/**
- * Retrieves a list of products.
- *
- * @returns {Observable<Product[]>} An observable that emits an array of products.
- */
-  getProducts(): Observable<Product[]> {
-    return of(PRODUCTS);
-  }
+    // For mock data
+    /**
+     * Retrieves a list of products.
+     *
+     * @returns {Observable<Product[]>} An observable that emits an array of products.
+     */
+    public getProducts(): Observable<Product[]> {
+        return of(PRODUCTS);
+    }
 
-  // For real API calls (optional)
-  // getProducts(): Observable<Product[]> {
-  //   return this.http.get<Product[]>('https://api.example.com/products');
-  // }
+    // For real API calls (optional)
+    // getProducts(): Observable<Product[]> {
+    //   return this.http.get<Product[]>('https://api.example.com/products');
+    // }
 }
 
 export { ProductService };

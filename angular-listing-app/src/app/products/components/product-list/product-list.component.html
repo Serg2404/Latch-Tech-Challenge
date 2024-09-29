@@ -2,9 +2,22 @@
     <h2>Product List</h2>
 
     <search-bar (search)="onSearch($event)" [debounceTime]="500"></search-bar>
+    
+    <filter
+    title="Filter by Category"
+    [filterType]="'multiselect'"
+    (filterChange)="onCategoriesSelectedChange($event)"
+    [multiselectOptions]="categories"
+    ></filter>
+
+    <filter
+    title="Filter by Price"
+    [filterType]="'range'"
+    (filterChange)="onPriceRangeChange($event)"
+    ></filter>
 
     <ul>
-        <li *ngFor="let product of filteredProducts">
+        <li *ngFor="let product of currentPageProducts">
             <product [product]="product"></product>
       </li>
     </ul>
