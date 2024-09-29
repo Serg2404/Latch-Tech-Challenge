@@ -1,18 +1,14 @@
 <div class="product-list">
     <h2>Product List</h2>
+
+    <search-bar (search)="onSearch($event)" [debounceTime]="500"></search-bar>
+
     <ul>
         <li *ngFor="let product of filteredProducts">
-            <h3>{{ product.name }}</h3>
-            <p>{{ product.description }}</p>
-            <p>Price: {{ product.price | currency }}</p>
-        </li>
+            <product [product]="product"></product>
+      </li>
     </ul>
-    <app-pagination
-        [currentPage]="currentPage"
-        [pageSize]="pageSize"
-        [totalItems]="totalItems"
-        [pageSizeOptions]="pageSizeOptions"
-        (pageChange)="onPageChange($event)"
-        (pageSizeChange)="onPageSizeChange($event)"
-    ></app-pagination>
+    <app-pagination [currentPage]="currentPage" [pageSize]="pageSize" [totalItems]="totalItems"
+        [pageSizeOptions]="pageSizeOptions" (pageChange)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"></app-pagination>
 </div>
