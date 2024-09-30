@@ -5,39 +5,7 @@ import { FilterType } from '../../../core/models/filter-type.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Import FormsModule
 
-/**
- * @component FilterComponent
- * 
- * @description
- * The `FilterComponent` is a standalone Angular component that provides various filtering options.
- * It allows users to filter data based on different criteria such as value, range, greater than, 
- * smaller than, and multiselect options.
- * 
- * @selector filter
- * 
- * @inputs
- * - `filterTypes: string[]` - An array of filter types available for selection. Default is 
- *   ['value', 'range', 'greater', 'smaller', 'multiselect'].
- * - `multiselectOptions?: Map<string, boolean>` - A map of options for multiselect filters. Default is an empty map.
- * - `rangeOptions?: PriceRange | null` - An optional range option for filtering. Default is null.
- * - `title: string` - The title of the filter component. Default is 'Filter'.
- * 
- * @outputs
- * - `filterChange: EventEmitter<any>` - Emits an event whenever the filter criteria change.
- * 
- * @properties
- * - `filterType: string` - The currently selected filter type. Default is 'value'.
- * - `filterValue: string | null` - The value for the 'value' filter type. Default is null.
- * - `filterMin: number | null` - The minimum value for the 'range' filter type. Default is null.
- * - `filterMax: number | null` - The maximum value for the 'range' filter type. Default is null.
- * - `filterGreater: number | null` - The value for the 'greater' filter type. Default is null.
- * - `filterSmaller: number | null` - The value for the 'smaller' filter type. Default is null.
- * - `filterMultiselect: Map<string, boolean> | null` - The map of selected options for the 'multiselect' filter type. Default is the provided multiselectOptions or null.
- * 
- * @methods
- * - `onFilterChange()` - Constructs a filter object based on the current filter criteria and emits the `filterChange` event.
- * - `onMultiselectChange(option: string, selected: boolean)` - Updates the multiselect options and triggers the `onFilterChange` method.
- */
+
 @Component({
     selector: 'filter',
     templateUrl: './filter.component.html',
@@ -52,13 +20,14 @@ export class FilterComponent {
     @Input() title: string = 'Filter';
     @Output() filterChange = new EventEmitter<Filter>();
 
-    filterValue: string | null = null;
-    filterMin: number | null = null;
-    filterMax: number | null = null;
-    filterGreater: number | null = null;
-    filterSmaller: number | null = null;
-    filterMultiselect: Map<string, boolean>  = new Map<string, boolean>();
+    public filterValue: string | null = null;
+    public filterMin: number | null = null;
+    public filterMax: number | null = null;
+    public filterGreater: number | null = null;
+    public filterSmaller: number | null = null;
+    public filterMultiselect: Map<string, boolean>  = new Map<string, boolean>();
     public filterTypes: FilterType[] = ['value', 'range', 'greater', 'smaller', 'multiselect'];
+    public showAllMultiselectOptions: boolean = false;
 
     /**
      * Handles the change in filter values and emits the updated filter object.
@@ -92,7 +61,6 @@ export class FilterComponent {
      */
     public onMultiselectChange(option: string, selected: boolean) {
         this.filterMultiselect!.set(option, selected);
-        this.onFilterChange();
     }
 
     /**
@@ -105,6 +73,20 @@ export class FilterComponent {
     public onRangeChange(min: number | null, max: number | null) {
         this.filterMin = min;
         this.filterMax = max;
+    }
+
+    /**
+     * Resets all filter values to their default states.
+     * Clears the filter values, range, greater, smaller, and multiselect options.
+     * Triggers the filter change event to notify about the reset.
+     */
+    public resetFilters() {
+        this.filterValue = null;
+        this.filterMin = null;
+        this.filterMax = null;
+        this.filterGreater = null;
+        this.filterSmaller = null;
+        this.filterMultiselect.clear();
         this.onFilterChange();
     }
 }

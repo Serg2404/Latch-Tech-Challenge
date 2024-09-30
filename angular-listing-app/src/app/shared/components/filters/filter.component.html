@@ -1,17 +1,23 @@
 <div class="filter-component">
     <h3>{{ title }}</h3>
     
-
     <div *ngIf="filterType === 'value'">
         <label for="filterValue">Value:</label>
         <input id="filterValue" type="text" [(ngModel)]="filterValue" (input)="onFilterChange()" />
     </div>
 
-    <div *ngIf="filterType === 'range'">
-        <label for="filterMin">Min:</label>
-        <input id="filterMin" type="number" [(ngModel)]="filterMin" (input)="onRangeChange(filterMin, filterMax)" />
-        <label for="filterMax">Max:</label>
-        <input id="filterMax" type="number" [(ngModel)]="filterMax" (input)="onRangeChange(filterMin, filterMax)" />
+    <div *ngIf="filterType === 'range'" class="range-filter">
+        <div class="range-group">
+            <label for="filterMin">Min:</label>
+            <input id="filterMin" type="number" [(ngModel)]="filterMin" (input)="onRangeChange(filterMin, filterMax)" />
+        </div>
+        <div class="range-group">
+            <label for="filterMax">Max:</label>
+            <input id="filterMax" type="number" [(ngModel)]="filterMax" (input)="onRangeChange(filterMin, filterMax)" />
+        </div>
+        <div *ngIf="(filterMin && filterMax) && filterMin > filterMax " class="error-message">
+            <span class="warning-icon">⚠️</span> Min value cannot be greater than Max value.
+        </div>
     </div>
 
     <div *ngIf="filterType === 'greater'">
@@ -23,11 +29,23 @@
         <label for="filterSmaller">Smaller than:</label>
         <input id="filterSmaller" type="number" [(ngModel)]="filterSmaller" (input)="onFilterChange()" />
     </div>
+    
     <div *ngIf="filterType === 'multiselect'">
-        <label>Multiselect Options:</label>
-        <div *ngFor="let option of multiselectOptions">
-            <input type="checkbox" [id]="option" #checkbox (change)="onMultiselectChange(option, checkbox.checked)" />
-            <label [for]="option">{{ option }}</label>
+        <div>
+            <div *ngFor="let option of multiselectOptions; let i = index">
+                <div *ngIf="i < 5 || showAllMultiselectOptions" class="multiselect-option">
+                    <input type="checkbox" [id]="option" #checkbox (change)="onMultiselectChange(option, checkbox.checked)" />
+                    <label [for]="option">{{ option }}</label>
+                </div>
+            </div>
+            <a *ngIf="multiselectOptions?.length! > 5" href="#" (click)="showAllMultiselectOptions = !showAllMultiselectOptions; $event.preventDefault();">
+                {{ showAllMultiselectOptions ? 'Show Less' : 'Show All' }}
+            </a>
         </div>
     </div>
+
+    <span class="filter-buttons">
+        <button (click)="onFilterChange()">Apply Filters</button>
+        <button (click)="resetFilters()">Reset Filters</button>
+    </span>
 </div>

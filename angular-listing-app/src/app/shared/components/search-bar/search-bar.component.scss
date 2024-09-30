@@ -1,0 +1,37 @@
+.search-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+
+}
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.search-input {
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-right: #ccc 1px solid;
+    border-radius: 0%;
+}
+
+.clear-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+
+    &:hover {
+        background-color: #d32f2f;
+    }
+}

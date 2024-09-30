@@ -1,0 +1,13 @@
+<div class="search-container">
+    <input 
+        class="search-input"
+        [(ngModel)]="searchTerm" 
+        type="text" 
+        placeholder="Search products" 
+        (input)="onInput()"
+    />
+    <button *ngIf="searchTerm" class="clear-button" (click)="clearSearch()">✖</button>
+    <button (click)="onSearch()">
+        <span class="search-icon">🔍</span>
+    </button>
+</div>

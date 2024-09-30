@@ -1,0 +1,40 @@
+
+.pagination-container {
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+    .pagination-section {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+        .page-size-container {
+            margin-right: 30px;
+        }
+    }
+}
+
+.page-links {
+    display: flex;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.page-links a {
+    margin: 0 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.page-links a.active {
+    font-weight: bold;
+}
+
+.page-input {
+    width: 50px;
+    margin: 0 5px;
+    padding: 5px;
+    border-radius: 5px;
+    text-align: center;
+
+}
