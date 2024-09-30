@@ -34,7 +34,7 @@
         <div>
             <div *ngFor="let option of multiselectOptions; let i = index">
                 <div *ngIf="i < 5 || showAllMultiselectOptions" class="multiselect-option">
-                    <input type="checkbox" [id]="option" #checkbox (change)="onMultiselectChange(option, checkbox.checked)" />
+                    <input type="checkbox" [id]="option" [(ngModel)]="filterMultiselect[option]" />
                     <label [for]="option">{{ option }}</label>
                 </div>
             </div>

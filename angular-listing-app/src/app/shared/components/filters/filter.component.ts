@@ -25,7 +25,7 @@ export class FilterComponent {
     public filterMax: number | null = null;
     public filterGreater: number | null = null;
     public filterSmaller: number | null = null;
-    public filterMultiselect: Map<string, boolean>  = new Map<string, boolean>();
+    public filterMultiselect: { [key: string]: boolean } = {};  
     public filterTypes: FilterType[] = ['value', 'range', 'greater', 'smaller', 'multiselect'];
     public showAllMultiselectOptions: boolean = false;
 
@@ -54,16 +54,6 @@ export class FilterComponent {
     }
 
     /**
-     * Handles the change event for a multiselect option.
-     *
-     * @param option - The option that was selected or deselected.
-     * @param selected - A boolean indicating whether the option was selected (true) or deselected (false).
-     */
-    public onMultiselectChange(option: string, selected: boolean) {
-        this.filterMultiselect!.set(option, selected);
-    }
-
-    /**
      * Handles the change in range values for filtering.
      * Updates the minimum and maximum filter values and triggers the filter change event.
      *
@@ -86,7 +76,7 @@ export class FilterComponent {
         this.filterMax = null;
         this.filterGreater = null;
         this.filterSmaller = null;
-        this.filterMultiselect.clear();
+        this.filterMultiselect = {};
         this.onFilterChange();
     }
 }
