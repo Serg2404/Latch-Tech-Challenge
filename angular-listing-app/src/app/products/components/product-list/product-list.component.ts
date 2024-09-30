@@ -10,10 +10,13 @@ import { FilterComponent } from '../../../shared/components/filters/filter.compo
 import { Filter } from '../../../core/models/filter.model';
 
 /**
- * @fileoverview ProductListComponent is responsible for displaying and managing a list of products.
- * It includes functionalities such as searching, filtering by category and price range, and pagination.
+ * @component ProductListComponent
+ * @description
+ * The ProductListComponent is responsible for displaying a list of products with functionalities 
+ * such as filtering by categories, price range, searching, and pagination. It interacts with the 
+ * ProductService to fetch the products and applies various filters and pagination to display the 
+ * products accordingly.
  * 
- * @component
  * @selector app-product-list
  * @standalone true
  * @imports [CommonModule, PaginationComponent, SearchComponent, ProductComponent, FilterComponent]
@@ -22,43 +25,43 @@ import { Filter } from '../../../core/models/filter.model';
  * @class ProductListComponent
  * @implements OnInit
  * 
- * @property {Product[]} private products - The complete list of products.
- * @property {Product[]} private filteredProducts - The list of products filtered based on search criteria.
+ * @property {Product[]} private products - The complete list of products fetched from the service.
+ * @property {Product[]} public filteredProducts - The list of products after applying filters and search.
  * @property {Product[]} public currentPageProducts - The list of products to be displayed on the current page.
- * @property {number} public currentPage - The current page number.
+ * @property {number} public currentPage - The current page number for pagination.
  * @property {number} public pageSize - The number of products to display per page.
- * @property {string} public searchTerm - The term used for searching products.
- * @property {number} public totalItems - The total number of items after filtering.
- * @property {number[]} public pageSizeOptions - The options for the number of products to display per page.
- * @property {string[]} public categories - The list of product categories.
- * @property {Map<string, boolean> | null} public categoriesSelected - The selected categories for filtering.
+ * @property {string} public searchTerm - The search term used to filter products.
+ * @property {number} public totalItems - The total number of items after filtering and searching.
+ * @property {number[]} public pageSizeOptions - The available options for the number of products per page.
+ * @property {string[]} public categories - The list of unique product categories.
+ * @property {Map<string, boolean> | null} public categoriesSelected - The map of selected categories for filtering.
  * @property {PriceRange | null} public priceRangeSelected - The selected price range for filtering.
  * 
  * @constructor
  * @param {ProductService} private productService - The service used to fetch products.
  * 
- * @method ngOnInit - Initializes the component by setting up subscriptions.
- * @method private initSubscriptions - Subscribes to the product service to fetch the list of products and initializes categories.
- * @method public refreshProducts - Refreshes the list of products by performing a search and then paginating the results.
- * @method private searchProducts - Filters the list of products based on the search term.
- * @method private paginateProducts - Paginates the filtered products based on the current page and page size.
- * @method public onPageChange - Handles the event when the page is changed.
- * @method public onPageSizeChange - Handles the change in page size for the product list.
- * @method public onSearch - Handles the search functionality by updating the search term and refreshing the product list.
- * @method private filterCategories - Filters the products based on the selected categories.
- * @method private filterPriceRange - Filters the products based on the selected price range.
- * @method public onCategoriesSelectedChange - Handles the change event when categories are selected.
- * @method public onPriceRangeChange - Handles the change event for the selected price range filter.
+ * @method ngOnInit - Initializes the component and sets up subscriptions.
+ * @method applyFiltersAndSearch - Refreshes the product list by applying filtering, searching, and pagination.
+ * @method filterCategories - Filters the products based on selected categories.
+ * @method filterPriceRange - Filters the products based on the selected price range.
+ * @method searchProducts - Filters the list of products based on the search term.
+ * @method paginateProducts - Paginates the filtered and searched products based on the current page and page size.
+ * @method onPageChange - Handles the event when the page is changed.
+ * @method onPageSizeChange - Handles the change in page size for the product list.
+ * @method onSearch - Handles the search functionality.
+ * @method onCategoriesSelectedChange - Handles the change event when categories are selected.
+ * @method onPriceRangeChange - Handles the change event for the selected price range filter.
  */
 @Component({
   selector: 'app-product-list',
   standalone: true,
   imports: [CommonModule, PaginationComponent, SearchComponent, ProductComponent, FilterComponent],
   templateUrl: './product-list.component.html',
+  styleUrls: ['./product-list.component.scss']
 })
 class ProductListComponent implements OnInit {
   private products: Product[] = [];
-  private filteredProducts: Product[] = [];
+  public filteredProducts: Product[] = [];
   public currentPageProducts: Product[] = [];
   public currentPage = 1;
   public pageSize = 10;
@@ -75,58 +78,89 @@ class ProductListComponent implements OnInit {
     this.initSubscriptions();
   }
 
-  /**
-   * Initializes the subscriptions for the component.
-   * 
-   * This method subscribes to the product service to fetch the list of products.
-   * Once the data is received, it updates the component's products and totalItems properties,
-   * and then refreshes the product list.
-   * 
-   * @private
-   */
   private initSubscriptions() {
     this.productService.getProducts().subscribe((data: Product[]) => {
       this.products = data;
       this.categories = [...new Set(this.products.map(p => p.category))];
       this.totalItems = this.products.length;
-      this.refreshProducts();
+      this.applyFiltersAndSearch();  // Apply filters and search initially
     });
   }
-    
 
   /**
-   * Refreshes the list of products by performing a search and then paginating the results.
-   * This method first calls `searchProducts` to update the product list based on the current search criteria,
-   * and then calls `paginateProducts` to organize the products into pages.
+   * This method refreshes the product list by applying filtering, searching, and pagination.
    */
-  public refreshProducts() {
-    this.searchProducts();
-    this.paginateProducts();
+  public applyFiltersAndSearch() {
+    this.filteredProducts = this.products;  // Start with the full list
+    this.filterCategories();                // Apply category filter
+    this.filterPriceRange();                // Apply price range filter
+    this.searchProducts();                  // Apply search term filter
+    this.paginateProducts();                // Paginate the final result
+  }
+
+  /**
+   * Filters the products based on the selected categories.
+   * 
+   * This method updates the `filteredProducts` array to include only those products
+   * whose category is selected in the `categoriesSelected` map. It first checks if 
+   * there are any selected categories. If there are, it filters the `filteredProducts`
+   * array to include only products that belong to one of the selected categories.
+   * 
+   * @private
+   */
+  private filterCategories() {
+    if (this.categoriesSelected && Array.from(this.categoriesSelected.values()).some(isSelected => isSelected)) {
+      this.filteredProducts = this.filteredProducts.filter(p => {
+        return Array.from(this.categoriesSelected!.entries())
+          .filter(([_, isSelected]) => isSelected)
+          .map(([category, _]) => category)
+          .includes(p.category);
+      });
+    }
+  }
+
+  /**
+   * Filters the products based on the selected price range.
+   * 
+   * If a price range is selected, this method will filter the `filteredProducts` array
+   * to include only those products whose price falls within the specified minimum and 
+   * maximum values.
+   * 
+   * @private
+   */
+  private filterPriceRange() {
+    if (this.priceRangeSelected) {
+      const { min, max } = this.priceRangeSelected;
+      if (min !== null && max !== null) {
+        this.filteredProducts = this.filteredProducts.filter(p => p.price >= min && p.price <= max);
+      }
+    }
   }
   
   /**
    * Filters the list of products based on the search term.
-   * The search is performed on the product's name, category, and description.
-   * The filtered products are stored in `filteredProducts` and the total number
-   * of filtered items is updated in `totalItems`.
+   * If a search term is provided, it filters the products by checking if the product's
+   * name, category, or description includes the search term (case-insensitive).
+   * Updates the total number of filtered products.
    *
    * @private
    */
   private searchProducts() {
-    this.filteredProducts = this.products
-      .filter(p =>
+    if (this.searchTerm) {
+      this.filteredProducts = this.filteredProducts.filter(p =>
         p.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         p.category.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         p.description.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
+    }
     this.totalItems = this.filteredProducts.length;
   }
 
   /**
    * Paginates the filtered products based on the current page and page size.
    * 
-   * This method calculates the starting index for the current page and slices the 
-   * `filteredProducts` array to include only the products for that page.
+   * This method calculates the starting index for the current page and slices
+   * the filtered products array to get the products for the current page.
    * 
    * @private
    */
@@ -136,115 +170,64 @@ class ProductListComponent implements OnInit {
   }
 
   /**
-   * Handles the event when the page is changed.
-   * Updates the current page and refreshes the product list.
+   * Handles the event when the page changes.
+   * Updates the current page number and triggers the pagination of products.
    * 
-   * @param newPage - The new page number to navigate to.
+   * @param {number} newPage - The new page number to navigate to.
    */
   public onPageChange(newPage: number) {
     this.currentPage = newPage;
     this.paginateProducts();
   }
 
+
   /**
    * Handles the change in page size for the product list.
-   * 
-   * @param newSize - The new page size to be set.
+   * Updates the page size and resets the current page to the first page.
+   * Reapplies all filters and pagination to reflect the new page size.
+   *
+   * @param {number} newSize - The new page size selected by the user.
    */
   public onPageSizeChange(newSize: number) {
     this.pageSize = newSize;
     this.currentPage = 1;
-    this.refreshProducts();
+    this.applyFiltersAndSearch();  // Reapply all filters and pagination
   }
 
   /**
    * Handles the search functionality by updating the search term,
-   * resetting the current page to the first page, and refreshing the product list.
+   * resetting the current page to the first page, and reapplying
+   * all filters and pagination.
    *
-   * @param term - The search term entered by the user.
+   * @param {string} term - The search term entered by the user.
    */
   public onSearch(term: string) {
     this.searchTerm = term;
     this.currentPage = 1;
-    this.refreshProducts();
-  }
-  /**
-   * Filters the products based on the selected categories.
-   * 
-   * If there are selected categories, it filters the products to include only those
-   * whose category is in the selected categories. Otherwise, it includes all products.
-   * 
-   * After filtering, it updates the total number of items and refreshes the product list.
-   * 
-   * @private
-   */
-  private filterCategories() {
-    if (this.categoriesSelected && Array.from(this.categoriesSelected.values()).some(isSelected => isSelected)) {
-      this.filteredProducts = this.products.filter(p => {
-      return Array.from(this.categoriesSelected!.entries())
-        .filter(([_, isSelected]) => isSelected)
-        .map(([category, _]) => category)
-        .includes(p.category);
-      });
-    } else {
-      this.filteredProducts = this.products;
-    }
-    this.totalItems = this.filteredProducts.length;
-    this.currentPage = 1; 
-    this.paginateProducts();
+    this.applyFiltersAndSearch();  // Reapply all filters and pagination
   }
 
-  /**
-   * Filters the products based on the selected price range.
-   * 
-   * This method checks if a price range is selected and if both the minimum and maximum values are not null.
-   * If the conditions are met, it filters the `filteredProducts` array to include only those products whose
-   * prices fall within the specified range. If both min and max values are empty, it shows all products.
-   * It then updates the `totalItems` property with the length of the filtered products array and calls 
-   * `refreshProducts()` to update the displayed products.
-   * 
-   * @private
-   */
-  private filterPriceRange() {
-    console.log(this.priceRangeSelected);
-    if (this.priceRangeSelected) {
-      const { min, max } = this.priceRangeSelected;
-      if (min !== null && max !== null) {
-        this.filteredProducts = this.products.filter(p => p.price >= min && p.price <= max);
-      } else {
-        this.filteredProducts = this.products;
-      }
-    } else {
-      this.filteredProducts = this.products;
-    }
-    console.log(this.filteredProducts);
-    this.totalItems = this.filteredProducts.length;
-    this.currentPage = 1;
-    this.paginateProducts();
-  }
 
   /**
    * Handles the change event when categories are selected.
-   * Updates the selected categories and applies the category filter.
+   * Updates the selected categories and reapplies all filters and pagination.
    *
-   * @param filterChange - The filter object containing the selected categories.
+   * @param {Filter} filterChange - The filter change event containing the updated multiselect categories.
    */
   public onCategoriesSelectedChange(filterChange: Filter) {
     this.categoriesSelected = filterChange.multiselect;
-    console.log(this.categoriesSelected);
-    this.filterCategories();
+    this.applyFiltersAndSearch();  // Reapply all filters and pagination
   }
 
   /**
-   * Handles the change event for the selected price range filter.
-   * Updates the `priceRangeSelected` property with the new range from the filter change event
-   * and triggers the filtering of products based on the selected price range.
-   *
-   * @param filterChange - The filter change event containing the new price range.
+   * Handles the change in the price range filter.
+   * Updates the selected price range and reapplies all filters and pagination.
+   * 
+   * @param {Filter} filterChange - The filter change event containing the updated multiselect categories.
    */
   public onPriceRangeChange(filterChange: Filter) {
     this.priceRangeSelected = filterChange.range;
-    this.filterPriceRange();
+    this.applyFiltersAndSearch();  // Reapply all filters and pagination
   }
 }
 

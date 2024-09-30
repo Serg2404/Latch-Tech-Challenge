@@ -1,0 +1,37 @@
+<span class="pagination-container">
+    <span class="pagination-section">
+        <button (click)="onPrevious()" [disabled]="currentPage === 1">
+            Previous <i class="fa fa-arrow-left"></i> 
+        </button>
+        
+        <div class="page-links">
+            <a *ngIf="currentPage > 1" (click)="goToPage(1)">1</a>
+            <span *ngIf="currentPage > 5">...</span>
+            <a *ngFor="let page of getPreviousPages(3)" (click)="goToPage(page)" [class.active]="page === currentPage">{{ page }}</a>
+            <input class="page-input" type="number" [value]="currentPage" (change)="onPageInputChange($event)" [min]="1" [max]="totalPages" />
+            <a *ngFor="let page of getNextPages(3)" (click)="goToPage(page)" [class.active]="page === currentPage">{{ page }}</a>
+            <span *ngIf="currentPage + 3 < totalPages - 1">...</span>
+            <a *ngIf="currentPage < totalPages && currentPage + 3 < totalPages" (click)="goToPage(totalPages)">{{ totalPages }}</a>
+        </div>
+        
+        <button (click)="onNext()" [disabled]="currentPage === totalPages">
+            Next <i class="fa fa-arrow-right"></i>
+        </button>
+        
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    </span>
+    
+    <span class="pagination-section">
+        <span class="page-size-container">
+            Page size:
+            <select (change)="onPageSizeChange($event)">
+                <option *ngFor="let size of pageSizeOptions" [value]="size" [selected]="size === pageSize">{{ size }}</option>
+            </select>
+        </span>
+        
+        <span>Showing {{ startItem }} to {{ endItem }} of {{ totalItems }} items</span>
+    </span>
+</span>
+
+<!-- Make sure to include Font Awesome for the icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">

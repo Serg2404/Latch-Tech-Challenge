@@ -1,0 +1,56 @@
+.product-list {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.product-list h2 {
+    text-align: center;
+    color: #333;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+}
+
+.filter {
+    margin-bottom: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+app-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.filters {
+    display: flex;
+    justify-content: start;
+    margin-bottom: 20px;
+    flex-direction: column;
+    gap: 10px; /* Add gap between filter items */
+}
+
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 0;
+    list-style-type: none;
+}
+
+.product-item {
+    flex: 1 1 calc(100% - 20px); 
+    box-sizing: border-box;
+    width: 200px; /* Set a fixed width */
+    height: 300px; /* Set a fixed height */
+}

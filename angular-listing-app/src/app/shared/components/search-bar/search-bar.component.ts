@@ -42,36 +42,11 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     selector: 'search-bar',
     standalone: true,
     imports: [CommonModule, FormsModule],
-    template: `
-        <div class="search-container">
-            <input 
-                [(ngModel)]="searchTerm" 
-                type="text" 
-                placeholder="Search products" 
-                (input)="onInput()"
-            />
-            <button (click)="onSearch()">
-                <span class="search-icon">🔍</span>
-            </button>
-        </div>
-    `,
-    styles: [`
-        .search-container {
-            display: flex;
-            align-items: center;
-        }
-        .search-icon {
-            /* Add your icon styles here */
-        }
-        button {
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-    `]
+    templateUrl: './search-bar.component.html',
+    styleUrls: ['./search-bar.component.scss']
 })
 export class SearchComponent implements OnInit, OnDestroy {
-    searchTerm: string = '';
+    public searchTerm: string = '';
     private searchSubject = new Subject<string>();
     private searchSubscription: Subscription = new Subscription;
 
@@ -120,6 +95,19 @@ export class SearchComponent implements OnInit, OnDestroy {
      * that a search has been initiated with the given term.
      */
     onSearch() {
+        this.search.emit(this.searchTerm);
+    }
+
+    /**
+     * Clears the current search term and emits an empty string.
+     * 
+     * This method is triggered when a clear action is performed.
+     * It resets the `searchTerm` to an empty string and emits
+     * an empty string to notify other components or services
+     * that the search has been cleared.
+     */
+    clearSearch() {
+        this.searchTerm = '';
         this.search.emit(this.searchTerm);
     }
 }

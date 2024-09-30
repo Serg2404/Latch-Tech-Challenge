@@ -7,7 +7,6 @@ import { ProductListComponent } from './products/components/product-list/product
   standalone: true,
   imports: [CommonModule, ProductListComponent],
   template: `
-    <h1>Product Listing App</h1>
     <app-product-list></app-product-list>
   `,
 })

@@ -1,9 +1,7 @@
 :host {
     display: block;
     padding: 1rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ 
 }
 
 .filter-container {
@@ -23,30 +21,68 @@
     flex-direction: column;
     gap: 0.5rem;
 }
-
-.filter-label {
-    font-size: 1rem;
-    color: #666;
-}
-
-.filter-input {
-    padding: 0.5rem;
+.multiselect-container {
+    position: absolute;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
 }
 
-.filter-button {
-    padding: 0.75rem 1.5rem;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.multiselect-container.show {
+    display: block;
 }
 
-.filter-button:hover {
-    background-color: #0056b3;
+.multiselect-options {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.multiselect-options div {
+    display: flex;
+    align-items: center;
+}
+
+.multiselect-option {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+
+.range-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-direction: row;
+    label {
+        width: 15%;
+    }
+    input {
+        width: 80%;
+    }
+}
+
+.range-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.8rem;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    margin-top: 10px;
 }

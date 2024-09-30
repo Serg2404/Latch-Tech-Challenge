@@ -1,6 +1,9 @@
 <div class="product-item">
-    <h3>{{ product.name }}</h3>
-    <h4>{{ product.category }}</h4>
-    <p>{{ product.description }}</p>
-    <p>Price: {{ product.price | currency }}</p>
+    <img [src]="product.imgUrl" alt="{{ product.name }}">
+    <span>
+        <h3>{{ product.name }}</h3>
+        <h4>{{ product.category }}</h4>
+        <p>{{ product.description }}</p>
+        <p>Price: {{ product.price | currency }}</p>
+    </span>
 </div>

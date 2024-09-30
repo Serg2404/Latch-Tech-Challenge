@@ -1,1 +1,117 @@
-/* You can add global styles to this file, and also import other style files */
+$primary-color: #657295;
+$secondary-color: #9F496E;
+$primary-font: 'Roboto', sans-serif;
+$secondary-font: 'Open Sans', sans-serif;
+$primary-background: #F2EBE5;
+$secondary-background: #2B262D;
+
+button {
+    background-color: $primary-color;
+    color: #fff;
+    font-family: $primary-font;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 20px;
+
+    &:hover {
+        background-color: darken($primary-color, 10%);
+    }
+}
+
+ul, ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+        padding: 10px;
+        border-bottom: 1px solid lighten($primary-color, 40%);
+        
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+}
+
+input {
+    border: 1px solid;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: $secondary-font;
+    box-sizing: border-box;
+    
+    &:focus {
+        border-color: darken($secondary-color, 10%);
+        outline: none;
+    }
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    accent-color: $secondary-color;
+    
+
+    &:checked {
+        background-color: $secondary-color;
+        border-color: $secondary-color;
+    }
+
+    &:focus {
+        outline: 2px solid lighten($primary-color, 20%);
+    }
+}
+
+select {
+    border: 1px solid $secondary-color;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: $secondary-font;
+    color: $secondary-color;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    &:focus {
+        border-color: darken($secondary-color, 10%);
+        outline: none;
+    }
+
+    option {
+        background-color: $primary-background;
+        color: $secondary-color;
+        font-family: $secondary-font;
+    }
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: $primary-font;
+    color: $secondary-color;
+    margin: 20px 0;
+}
+
+h1 {
+    font-size: 2.5em;
+}
+
+h2 {
+    font-size: 2em;
+}
+
+h3 {
+    font-size: 1.75em;
+}
+
+h4 {
+    font-size: 1.5em;
+}
+
+h5 {
+    font-size: 1.25em;
+}
+
+h6 {
+    font-size: 1em;
+}

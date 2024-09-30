@@ -39,16 +39,8 @@ import { CommonModule } from '@angular/common';
     selector: 'app-pagination',
     standalone: true,
     imports: [CommonModule],  // Import CommonModule here
-    template: `
-        <button (click)="onPrevious()" [disabled]="currentPage === 1">Previous</button>
-        <input type="number" [value]="currentPage" (change)="onPageInputChange($event)" [min]="1" [max]="totalPages" />
-        <button (click)="onNext()" [disabled]="currentPage === totalPages">Next</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <select (change)="onPageSizeChange($event)">
-            <option *ngFor="let size of pageSizeOptions" [value]="size" [selected]="size === pageSize">{{ size }}</option>
-        </select>
-        <span>Showing {{ startItem }} to {{ endItem }} of {{ totalItems }} items</span>
-    `
+    templateUrl: './pagination.component.html',
+    styleUrls: ['./pagination.component.scss']
 })
 class PaginationComponent {
     @Input() currentPage: number = 1;
@@ -142,6 +134,59 @@ class PaginationComponent {
         this.pageSize = newSize;
         this.pageSizeChange.emit(newSize);
         this.pageChange.emit(1); // Reset to the first page when page size changes
+    }
+
+    /**
+     * Gets the next pages based on the current page.
+     * 
+     * @param count - The number of pages to retrieve after the current page.
+     * @returns {number[]} An array of the next page numbers.
+     */
+    getNextPages(count: number = 5): number[] {
+        const nextPages: number[] = [];
+        for (let i = 1; i <= count; i++) {
+            const nextPage = this.currentPage + i;
+            if (nextPage <= this.totalPages) {
+                nextPages.push(nextPage);
+            } else {
+                break;
+            }
+        }
+        return nextPages;
+    }
+
+    /**
+     * Gets the previous pages based on the current page, excluding the first page.
+     * 
+     * @param count - The number of pages to retrieve before the current page.
+     * @returns {number[]} An array of the previous page numbers, excluding the first page.
+     */
+    getPreviousPages(count: number = 5): number[] {
+        const previousPages: number[] = [];
+        for (let i = 1; i <= count; i++) {
+            const previousPage = this.currentPage - i;
+            if (previousPage > 1) { // Exclude the first page
+                previousPages.push(previousPage);
+            } else {
+                break;
+            }
+        }
+        return previousPages.reverse();
+    }
+
+
+    /**
+     * Navigates to a specific page.
+     * 
+     * @param page - The page number to navigate to.
+     * 
+     * This method validates the page number to ensure it is within the valid range.
+     * If the page number is valid, it emits the `pageChange` event with the new page number.
+     */
+    goToPage(page: number) {
+        if (page >= 1 && page <= this.totalPages) {
+            this.pageChange.emit(page);
+        }
     }
 }
 

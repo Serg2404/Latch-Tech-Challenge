@@ -1,0 +1,11 @@
+.product-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* Optional: Align items vertically center */
+}
+
+.product-item img {
+    width: 150px; /* Set your desired width */
+    height: 150px; /* Set your desired height */
+    margin-right: 10px; /* Optional: Add some space between the image and other content */
+}

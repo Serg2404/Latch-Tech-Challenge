@@ -1,27 +1,30 @@
 <div class="product-list">
-    <h2>Product List</h2>
+    <h2>Product List</h2>  
+    <search-bar (search)="onSearch($event)" [debounceTime]="500"></search-bar>  
+    <span style="display: flex;">
+        <div class="filters" style="flex: 1;">
+            <filter
+                title="Filter by Category"
+                [filterType]="'multiselect'"
+                (filterChange)="onCategoriesSelectedChange($event)"
+                [multiselectOptions]="categories"
+            ></filter>
 
-    <search-bar (search)="onSearch($event)" [debounceTime]="500"></search-bar>
-    
-    <filter
-    title="Filter by Category"
-    [filterType]="'multiselect'"
-    (filterChange)="onCategoriesSelectedChange($event)"
-    [multiselectOptions]="categories"
-    ></filter>
-
-    <filter
-    title="Filter by Price"
-    [filterType]="'range'"
-    (filterChange)="onPriceRangeChange($event)"
-    ></filter>
-
-    <ul>
-        <li *ngFor="let product of currentPageProducts">
-            <product [product]="product"></product>
-      </li>
-    </ul>
-    <app-pagination [currentPage]="currentPage" [pageSize]="pageSize" [totalItems]="totalItems"
-        [pageSizeOptions]="pageSizeOptions" (pageChange)="onPageChange($event)"
-        (pageSizeChange)="onPageSizeChange($event)"></app-pagination>
+            <filter
+                title="Filter by Price"
+                [filterType]="'range'"
+                (filterChange)="onPriceRangeChange($event)"
+            ></filter>
+        </div>
+        <div style="flex: 3;">
+            <ul class="product-grid">
+                <li *ngFor="let product of currentPageProducts" class="product-item">
+                    <product [product]="product"></product>
+                </li>
+            </ul>
+            <app-pagination [currentPage]="currentPage" [pageSize]="pageSize" [totalItems]="totalItems"
+                [pageSizeOptions]="pageSizeOptions" (pageChange)="onPageChange($event)"
+                (pageSizeChange)="onPageSizeChange($event)"></app-pagination>
+        </div>
+    </span>
 </div>
