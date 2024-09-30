@@ -32,6 +32,10 @@
     
     <div *ngIf="filterType === 'multiselect'">
         <div>
+            <div>
+                <input type="checkbox" id="selectAll" (change)="toggleSelectAll()" />
+                <label for="selectAll">Select All</label>
+            </div>
             <div *ngFor="let option of multiselectOptions; let i = index">
                 <div *ngIf="i < 5 || showAllMultiselectOptions" class="multiselect-option">
                     <input type="checkbox" [id]="option" [(ngModel)]="filterMultiselect[option]" />

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { Filter } from '../../../core/models/filter.model';
 import { PriceRange } from '../../../core/models/price-range.model';
 import { FilterType } from '../../../core/models/filter-type.model';
@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms'; // Import FormsModule
     standalone: true,
     imports: [CommonModule, FormsModule], // Add FormsModule here
 })
-export class FilterComponent {
+export class FilterComponent implements OnInit {
     @Input() filterType: FilterType = 'value';
     @Input() multiselectOptions?: Array<string> | null = null;
     @Input() rangeOptions?: PriceRange | null = null;
@@ -25,9 +25,14 @@ export class FilterComponent {
     public filterMax: number | null = null;
     public filterGreater: number | null = null;
     public filterSmaller: number | null = null;
-    public filterMultiselect: { [key: string]: boolean } = {};  
+    public filterMultiselect: { [key: string]: boolean } = {};
     public filterTypes: FilterType[] = ['value', 'range', 'greater', 'smaller', 'multiselect'];
     public showAllMultiselectOptions: boolean = false;
+    public isSelectAllDisabled: boolean = false;
+
+    ngOnInit() {
+        this.filterMultiselect = this.initializeMultiselectOptions();
+    }
 
     /**
      * Handles the change in filter values and emits the updated filter object.
@@ -78,5 +83,38 @@ export class FilterComponent {
         this.filterSmaller = null;
         this.filterMultiselect = {};
         this.onFilterChange();
+    }
+
+    /**
+     * Toggles the selection of all multiselect options.
+     * If all options are currently selected, it will deselect all.
+     * If not all options are selected, it will select all.
+     */
+    public toggleSelectAll() {
+        this.isSelectAllDisabled = !this.isSelectAllDisabled;
+        for (const key in this.filterMultiselect) {
+            if (this.filterMultiselect.hasOwnProperty(key)) {
+                this.filterMultiselect[key] = this.isSelectAllDisabled;
+            }
+        }
+        this.onFilterChange();
+    }
+
+    /**
+     * Initializes the multiselect options.
+     * 
+     * This method creates an object where each key is an option from the 
+     * `multiselectOptions` array and each value is set to `false`.
+     * 
+     * @returns An object with keys from `multiselectOptions` and values set to `false`.
+     */
+    private initializeMultiselectOptions(): { [key: string]: boolean } {
+        const options: { [key: string]: boolean } = {};
+        if (this.multiselectOptions) {
+            this.multiselectOptions.forEach(option => {
+                options[option] = false;
+            });
+        }
+        return options;
     }
 }
