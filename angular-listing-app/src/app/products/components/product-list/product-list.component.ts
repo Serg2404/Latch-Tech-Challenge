@@ -69,7 +69,7 @@ class ProductListComponent implements OnInit {
   public totalItems = 0;
   public pageSizeOptions = [5, 10, 20, 50];
   public categories: Array<string> = [];
-  public categoriesSelected: Map<string, boolean> | null = new Map<string, boolean>();
+  public categoriesSelected: { [key: string]: boolean } | null = {};
   public priceRangeSelected: PriceRange | null = { min: null, max: null };
 
   constructor(private productService: ProductService) { }
@@ -102,16 +102,16 @@ class ProductListComponent implements OnInit {
    * Filters the products based on the selected categories.
    * 
    * This method updates the `filteredProducts` array to include only those products
-   * whose category is selected in the `categoriesSelected` map. It first checks if 
+   * whose category is selected in the `categoriesSelected` object. It first checks if 
    * there are any selected categories. If there are, it filters the `filteredProducts`
    * array to include only products that belong to one of the selected categories.
    * 
    * @private
    */
   private filterCategories() {
-    if (this.categoriesSelected && Array.from(this.categoriesSelected.values()).some(isSelected => isSelected)) {
+    if (this.categoriesSelected && Object.values(this.categoriesSelected).some(isSelected => isSelected)) {
       this.filteredProducts = this.filteredProducts.filter(p => {
-        return Array.from(this.categoriesSelected!.entries())
+        return this.categoriesSelected && Object.entries(this.categoriesSelected)
           .filter(([_, isSelected]) => isSelected)
           .map(([category, _]) => category)
           .includes(p.category);
