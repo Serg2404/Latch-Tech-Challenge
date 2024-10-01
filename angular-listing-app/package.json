@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:ssr": "ng build --configuration=production && ng run angular-listing-app:server:production",
+    "start:ssr": "node dist/angular-listing-app/server/main.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:angular-listing-app": "node dist/angular-listing-app/server/server.mjs"
