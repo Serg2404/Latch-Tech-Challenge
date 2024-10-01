@@ -20,6 +20,8 @@ router.post('/products', async (req, res) => {
  *   get:
  *     summary: Retrieve a list of products
  *     description: Retrieve a list of products from the database.
+ *     tags:
+ *     - Products
  *     responses:
  *       200:
  *         description: A list of products.
@@ -64,6 +66,8 @@ router.get('/products', async (req, res) => {
  *   get:
  *     summary: Retrieve the total count of products
  *     description: Retrieve the total count of products from the database.
+ *     tags:
+ *     - Products
  *     responses:
  *       200:
  *         description: The total count of products.
