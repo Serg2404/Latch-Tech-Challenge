@@ -5,7 +5,6 @@ const Product = require('../models/Product');
 // Filters products based on the incoming filter payload
 exports.filterProducts = async (req, res) => {
     try {
-        console.log('Filtering products:', req.body);
         const { searchTerm, currentPage, pageSize, filters } = req.body;
 
         // Base query to start with
@@ -20,9 +19,9 @@ exports.filterProducts = async (req, res) => {
             ];
         }
 
-        // Apply each filter in the filters array
-        if (filters && filters.length > 0) {
-            filters.forEach(filter => {
+        // Apply each filter in the filters object
+        if (filters && filters.filters.length > 0) {
+            filters.filters.forEach(filter => {
                 let filterKey = filter.key;
                 let filterValues = filter.values;
                 let filterType = filter.type;

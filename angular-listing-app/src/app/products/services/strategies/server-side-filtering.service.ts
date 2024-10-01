@@ -51,12 +51,14 @@ class ServerSideFilteringService implements FilteringStrategy {
 
     const payload: FilterRequestPayload = {
       searchTerm,
-      filters: filters.map(filter => ({
+      filters: {
+        logic: 'and',
+        filters: filters.map(filter => ({
         key: filter.key,
         values: filter.value.value ? filter.value.value : [],
         type: filter.value.type,
         logic: 'or'
-      })),
+      }))},
       currentPage: pageNumber,
       pageSize
     };

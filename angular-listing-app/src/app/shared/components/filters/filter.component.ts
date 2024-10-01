@@ -33,7 +33,6 @@ export class FilterComponent implements OnInit, OnChanges {
 
     ngOnInit() {
         this.filterMultiselect = this.initializeMultiselectOptions();
-        console.log('filter multiselect', this.filterMultiselect);
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -90,6 +89,11 @@ export class FilterComponent implements OnInit, OnChanges {
         this.filterGreater = null;
         this.filterSmaller = null;
         this.filterMultiselect = {};
+        for (const key in this.filterMultiselect) {
+            if (this.filterMultiselect.hasOwnProperty(key)) {
+            this.filterMultiselect[key] = false;
+            }
+        }
         this.onFilterChange();
     }
 
@@ -105,7 +109,6 @@ export class FilterComponent implements OnInit, OnChanges {
                 this.filterMultiselect[key] = this.isSelectAllDisabled;
             }
         }
-        this.onFilterChange();
     }
 
     /**

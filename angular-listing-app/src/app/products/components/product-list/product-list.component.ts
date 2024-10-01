@@ -113,23 +113,16 @@ class ProductListComponent implements OnInit {
         multiselect: this.categoriesSelected,
         type: 'multiselect' as FilterType,
         value: categories,
-        range: null,
-        greater: null,
-        smaller: null
       } 
       });
     }
     if (this.priceRangeSelected && (this.priceRangeSelected.min !== null || this.priceRangeSelected.max !== null)) {
       filters.push({ 
-      key: 'price', 
-      value: {
-        range: this.priceRangeSelected,
-        type: 'range' as FilterType,
-        value: null,
-        greater: null,
-        smaller: null,
-        multiselect: null
-      } 
+        key: 'price', 
+        value: {
+          type: 'range' as FilterType,
+          value: [this.priceRangeSelected.min, this.priceRangeSelected.max],
+        } 
       });
     }
 

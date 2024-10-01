@@ -17,14 +17,19 @@
             ></filter>
         </div>
         <div style="flex: 3;">
-            <ul class="product-grid">
-                <li *ngFor="let product of currentPageProducts" class="product-item">
-                    <product [product]="product"></product>
-                </li>
-            </ul>
-            <app-pagination [currentPage]="currentPage" [pageSize]="pageSize" [totalItems]="totalItems"
-                [pageSizeOptions]="pageSizeOptions" (pageChange)="onPageChange($event)"
-                (pageSizeChange)="onPageSizeChange($event)"></app-pagination>
+            <ng-container *ngIf="currentPageProducts.length > 0; else noProducts">
+                <ul class="product-grid">
+                    <li *ngFor="let product of currentPageProducts" class="product-item">
+                        <product [product]="product"></product>
+                    </li>
+                </ul>
+                <app-pagination [currentPage]="currentPage" [pageSize]="pageSize" [totalItems]="totalItems"
+                    [pageSizeOptions]="pageSizeOptions" (pageChange)="onPageChange($event)"
+                    (pageSizeChange)="onPageSizeChange($event)"></app-pagination>
+            </ng-container>
+            <ng-template #noProducts>
+                <p>No products found, please try with other options</p>
+            </ng-template>
         </div>
     </span>
 </div>
