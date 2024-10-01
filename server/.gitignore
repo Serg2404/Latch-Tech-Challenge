@@ -13,3 +13,6 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
+
+# Environment 
+.env
