@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { Filter } from '../../../core/models/filter.model';
 import { PriceRange } from '../../../core/models/price-range.model';
 import { FilterType } from '../../../core/models/filter-type.model';
@@ -13,7 +13,8 @@ import { FormsModule } from '@angular/forms'; // Import FormsModule
     standalone: true,
     imports: [CommonModule, FormsModule], // Add FormsModule here
 })
-export class FilterComponent implements OnInit {
+export class FilterComponent implements OnInit, OnChanges {
+
     @Input() filterType: FilterType = 'value';
     @Input() multiselectOptions?: Array<string> | null = null;
     @Input() rangeOptions?: PriceRange | null = null;
@@ -32,6 +33,12 @@ export class FilterComponent implements OnInit {
 
     ngOnInit() {
         this.filterMultiselect = this.initializeMultiselectOptions();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['multiselectOptions']?.currentValue !== changes['multiselectOptions']?.previousValue) { 
+            this.filterMultiselect = this.initializeMultiselectOptions();
+        }
     }
 
     /**
@@ -82,6 +89,11 @@ export class FilterComponent implements OnInit {
         this.filterGreater = null;
         this.filterSmaller = null;
         this.filterMultiselect = {};
+        for (const key in this.filterMultiselect) {
+            if (this.filterMultiselect.hasOwnProperty(key)) {
+            this.filterMultiselect[key] = false;
+            }
+        }
         this.onFilterChange();
     }
 
@@ -97,7 +109,6 @@ export class FilterComponent implements OnInit {
                 this.filterMultiselect[key] = this.isSelectAllDisabled;
             }
         }
-        this.onFilterChange();
     }
 
     /**

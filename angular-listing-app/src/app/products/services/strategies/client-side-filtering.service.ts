@@ -32,12 +32,18 @@ class ClientSideFilteringService implements FilteringStrategy {
     /**
    * This method refreshes the product list by applying filtering, searching, and pagination.
    */
-    public applyFiltersAndSearch(searchTerm: string, filters: {key: FilterType, value: Filter}[], pageNumber: number, pageSize: number): Product[] {
-      this.filteredProducts = this.products;  // Start with the full list
-      this.applyFilters(filters);             // Apply filters
-      this.search(searchTerm);                  // Apply search term filter
-      this.paginate(pageNumber, pageSize);                // Paginate the final result
-      return this.filteredProducts;
+    public applyFiltersAndSearch(searchTerm: string, filters: {key: FilterType, value: Filter}[], pageNumber: number, pageSize: number): Observable<{products: Product[], totalItems: number}> {
+      return new Observable(observer => {
+        this.filteredProducts = this.products;  // Start with the full list
+        this.applyFilters(filters);             // Apply filters
+        this.search(searchTerm);                // Apply search term filter
+        const filteredProductsCount = this.filteredProducts.length;
+        const paginate = this.paginate(pageNumber, pageSize);  // Paginate
+        paginate.subscribe(products => {
+          observer.next({products, totalItems: filteredProductsCount});
+          observer.complete();
+        });
+      });
     }
 
   getProductsCount(): Observable<number> {
@@ -116,9 +122,13 @@ class ClientSideFilteringService implements FilteringStrategy {
     );
   }
 
-  paginate(page: number, pageSize: number): Product[] {
-    const startIndex = (page - 1) * pageSize;
-    return this.filteredProducts.slice(startIndex, startIndex + pageSize);
+  paginate(page: number, pageSize: number): Observable<Product[]> {
+    return new Observable(observer => {
+      const startIndex = (page - 1) * pageSize;
+      const paginatedProducts = this.filteredProducts.slice(startIndex, startIndex + pageSize);
+      observer.next(paginatedProducts);
+      observer.complete();
+    });
   }
 }
 

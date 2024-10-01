@@ -1,6 +1,7 @@
 const express = require('express');
 const Product = require('../models/Product');
 const router = express.Router();
+const productController = require('../controllers/productController');
 
 // Create a product
 router.post('/products', async (req, res) => {
@@ -57,25 +58,25 @@ router.get('/products', async (req, res) => {
     }
 });
 
-
-
 /** 
-* @swagger
-* /api/products/count:
-*   get:
-*     summary: Retrieve the total count of products
-*     description: Retrieve the total count of products from the database.
-*     responses:
-*       200:
-*         count: 10
-*         description: The total count of products.
-*         content:
-*           application/json:
-*             schema:
-*               type: number
-*               example: 10
-*       500:
-*         description: Failed to fetch products count.
+ * @swagger
+ * /api/products/count:
+ *   get:
+ *     summary: Retrieve the total count of products
+ *     description: Retrieve the total count of products from the database.
+ *     responses:
+ *       200:
+ *         description: The total count of products.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: number
+ *                   example: 10
+ *       500:
+ *         description: Failed to fetch products
 */
 router.get('/products/count', async (req, res) => {
     try {
@@ -105,5 +106,77 @@ router.delete('/products/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to delete product' });
     }
 });
+
+/**
+ * @swagger
+ * /api/products/filter:
+ *   post:
+ *     summary: Filter and search products based on various criteria.
+ *     description: Retrieves a list of products that match the search term, filters, and pagination settings provided in the request payload.
+ *     tags: 
+ *       - Products
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               searchTerm:
+ *                 type: string
+ *                 description: The search term to filter products by name, description, or category.
+ *                 example: "phone"
+ *               currentPage:
+ *                 type: integer
+ *                 description: The current page number for pagination.
+ *                 example: 1
+ *               pageSize:
+ *                 type: integer
+ *                 description: The number of products to display per page.
+ *                 example: 10
+ *               filters:
+ *                 type: array
+ *                 description: A list of filters to apply.
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     key:
+ *                       type: string
+ *                       description: The field on which to apply the filter (e.g., "price", "category").
+ *                       example: "price"
+ *                     values:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["500", "1000"]
+ *                     type:
+ *                       type: string
+ *                       description: The type of filter (e.g., "range" for price, "multiselect" for categories).
+ *                       example: "range"
+ *                     logic:
+ *                       type: string
+ *                       description: Whether the filter applies with "and" or "or" logic.
+ *                       example: "and"
+ *     responses:
+ *       200:
+ *         description: A list of filtered products and the total number of products that match the criteria.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 products:
+ *                   type: array
+ *                   description: The filtered products.
+ *                 totalItems:
+ *                   type: integer
+ *                   description: The total number of products that match the filtering criteria.
+ *                   example: 50
+ *       400:
+ *         description: Bad request if the payload is malformed.
+ *       500:
+ *         description: Internal server error if filtering fails.
+ */
+router.post('/products/filter', productController.filterProducts);
 
 module.exports = router;

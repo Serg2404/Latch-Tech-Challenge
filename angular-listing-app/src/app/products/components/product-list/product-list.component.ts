@@ -10,6 +10,8 @@ import { FilterComponent } from '../../../shared/components/filters/filter.compo
 import { Filter } from '../../../core/models/filter.model';
 import { FilteringService } from '../../services/filtering.service';
 import { firstValueFrom } from 'rxjs';
+import { response } from 'express';
+import { FilterType } from '../../../core/models/filter-type.model';
 
 /**
  * @component ProductListComponent
@@ -102,27 +104,34 @@ class ProductListComponent implements OnInit {
    * This method refreshes the product list by applying filtering, searching, and pagination.
    */
   public applyFiltersAndSearch() {
-    this.currentPageProducts = this.filteringService.applyFiltersAndSearch(this.searchTerm, 
-      [{ key: 'multiselect', value: {
+    const filters = [];
+    if (this.categoriesSelected && Object.values(this.categoriesSelected).some(selected => selected)) {
+      const categories = Object.keys(this.categoriesSelected).flatMap(category => this.categoriesSelected![category] ? category : []);
+      filters.push({ 
+      key: 'category', 
+      value: {
         multiselect: this.categoriesSelected,
-        type: 'multiselect',
-        value: null,
-        range: null,
-        greater: null,
-        smaller: null
-      } }, 
-      { key: 'range', value: {
-        range: this.priceRangeSelected,
-        type: 'multiselect',
-        value: null,
-        greater: null,
-        smaller: null,
-        multiselect: null
-      } }]
-      , this.currentPage, this.pageSize);
-    this.totalItems = this.currentPageProducts.length;
+        type: 'multiselect' as FilterType,
+        value: categories,
+      } 
+      });
+    }
+    if (this.priceRangeSelected && (this.priceRangeSelected.min !== null || this.priceRangeSelected.max !== null)) {
+      filters.push({ 
+        key: 'price', 
+        value: {
+          type: 'range' as FilterType,
+          value: [this.priceRangeSelected.min, this.priceRangeSelected.max],
+        } 
+      });
+    }
+
+    this.filteringService.applyFiltersAndSearch(this.searchTerm, filters, this.currentPage, this.pageSize)
+      .subscribe(response => {
+      this.currentPageProducts = response.products;
+      this.totalItems = response.totalItems;
+      });
   }
-  
   /**
    * Paginates the filtered products based on the current page and page size.
    * 
@@ -132,7 +141,9 @@ class ProductListComponent implements OnInit {
    * @private
    */
   private paginateProducts() {
-    this.currentPageProducts = this.filteringService.paginate(this.currentPage, this.pageSize);
+    this.filteringService.paginate(this.currentPage, this.pageSize).subscribe(paginatedProducts => {
+      this.currentPageProducts = paginatedProducts;
+    });
   }
 
   /**
