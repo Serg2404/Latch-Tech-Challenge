@@ -76,8 +76,10 @@ The backend filtering is done based on a payload object that includes search ter
 
 
 ### Deployment:
-The backend is deployed to: [https://latch-tech-challenge.onrender.com/](https://latch-tech-challenge.onrender.com)
-Swagger: [https://latch-tech-challenge.onrender.com/api-docs](https://latch-tech-challenge.onrender.com/api-docs)
+
+The backend is deployed to: [https://latch-tech-challenge.onrender.com/](https://latch-tech-challenge.onrender.com).
+Swagger: [https://latch-tech-challenge.onrender.com/api-docs](https://latch-tech-challenge.onrender.com/api-docs).
+
 ---
 
 ## Frontend - Angular
@@ -138,7 +140,8 @@ A **Proxy Service** is used to determine which filtering strategy to apply. It a
 The service makes use of two different implementations (strategies) of filtering logic but presents a unified API to the component, making it easier to maintain and extend.
 
 ### Deployment:
-The frontend is deployed to: [https://latch-tech-challenge.onrender.com/](https://latch-tech-challenge-fe.onrender.com)
+
+The frontend is deployed to: [https://latch-tech-challenge.onrender.com/](https://latch-tech-challenge-fe.onrender.com).
 
 ---
 
