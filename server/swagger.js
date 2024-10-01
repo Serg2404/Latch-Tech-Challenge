@@ -1,4 +1,5 @@
 // config/swagger.js
+const { url } = require('inspector');
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -14,6 +15,9 @@ const swaggerDefinition = {
     {
       url: 'http://localhost:5000', // Your server URL
     },
+    {
+      url: 'https://latch-tech-challenge.onrender.com/', // Your production server URL
+    }
   ],
 };
 
