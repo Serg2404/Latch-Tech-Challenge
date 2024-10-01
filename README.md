@@ -30,7 +30,7 @@ This project is a full-stack application that features a product listing page wi
     Create a `.env` file in the root of the `server` folder with the following variables:
     ```bash
     MONGO_URI=mongodb://localhost:27017/your-database
-    PORT=3000
+    PORT=5000
     ```
 
 3. **Run the Server**:
@@ -39,7 +39,7 @@ This project is a full-stack application that features a product listing page wi
     npm run dev
     ```
 
-    The server should now be running on `http://localhost:3000`.
+    The server should now be running on `http://localhost:5000`.
 
 ### API Endpoints
 
@@ -90,7 +90,7 @@ The backend filtering is done based on a payload object that includes search ter
     ```typescript
     export const environment = {
       production: false,
-      apiUrl: 'http://localhost:3000/api'
+      apiUrl: 'http://localhost:5000/api'
     };
     ```
 
