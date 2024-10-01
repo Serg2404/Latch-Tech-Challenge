@@ -4,16 +4,17 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const setupSwagger = require('./swagger');
 
-
 // Load environment variables
 dotenv.config();
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON data
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI).then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.log('Failed to connect to MongoDB:', err));
+// Connect to MongoDB Atlas
+const mongoURI = process.env.MONGO_URI || 'your-mongodb-atlas-connection-string';
+mongoose.connect(mongoURI)
+  .then(() => console.log('Connected to MongoDB Atlas'))
+  .catch(err => console.log('Failed to connect to MongoDB Atlas:', err));
 
 
 // Use Swagger
