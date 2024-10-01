@@ -8,6 +8,7 @@ This project is a full-stack application that features a product listing page wi
     - [Setup](#setup)
     - [API Endpoints](#api-endpoints)
     - [Filtering Logic](#filtering-logic)
+    - [Deployment](#deployment)
 2. [Frontend - Angular](#frontend---angular)
     - [Setup](#setup-1)
     - [Filter Strategies](#filter-strategies)
@@ -73,6 +74,10 @@ This project is a full-stack application that features a product listing page wi
 
 The backend filtering is done based on a payload object that includes search terms, filters, and pagination details. The filtering supports multiple fields such as categories, price ranges, and free-text search. The API filters the data and paginates the results before returning them to the frontend.
 
+
+### Deployment:
+The backend is deployed to: [https://latch-tech-challenge.onrender.com/](https://latch-tech-challenge.onrender.com)
+Swagger: [https://latch-tech-challenge.onrender.com/api-docs](https://latch-tech-challenge.onrender.com/api-docs)
 ---
 
 ## Frontend - Angular
@@ -131,6 +136,9 @@ A **Proxy Service** is used to determine which filtering strategy to apply. It a
   - If the product count is above the threshold, the **Server-Side Filtering** strategy is used.
 
 The service makes use of two different implementations (strategies) of filtering logic but presents a unified API to the component, making it easier to maintain and extend.
+
+### Deployment:
+The frontend is deployed to: [https://latch-tech-challenge.onrender.com/](https://latch-tech-challenge-fe.onrender.com)
 
 ---
 
