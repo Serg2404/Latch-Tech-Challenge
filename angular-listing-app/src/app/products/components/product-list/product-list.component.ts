@@ -8,6 +8,8 @@ import { ProductComponent } from '../product/product.component';
 import { PriceRange } from '../../../core/models/price-range.model';
 import { FilterComponent } from '../../../shared/components/filters/filter.component';
 import { Filter } from '../../../core/models/filter.model';
+import { FilteringService } from '../../services/filtering.service';
+import { firstValueFrom } from 'rxjs';
 
 /**
  * @component ProductListComponent
@@ -72,18 +74,27 @@ class ProductListComponent implements OnInit {
   public categoriesSelected: { [key: string]: boolean } | null = {};
   public priceRangeSelected: PriceRange | null = { min: null, max: null };
 
-  constructor(private productService: ProductService) { }
+  constructor(private filteringService: FilteringService) { }
 
   public ngOnInit() {
     this.initSubscriptions();
   }
 
-  private initSubscriptions() {
-    this.productService.getProducts().subscribe((data: Product[]) => {
+  private async initSubscriptions() {
+    this.getProducts();
+  }
+
+  /**
+   * Fetches the products from the ProductService and initializes the component state.
+   * This method is called during the component initialization to load the products.
+   */
+  private async getProducts() {
+    await firstValueFrom(this.filteringService.switchStrategy());
+    this.filteringService.getProducts().subscribe((data: Product[]) => {
       this.products = data;
       this.categories = [...new Set(this.products.map(p => p.category))];
       this.totalItems = this.products.length;
-      this.applyFiltersAndSearch();  // Apply filters and search initially
+      this.applyFiltersAndSearch();  
     });
   }
 
@@ -91,71 +102,27 @@ class ProductListComponent implements OnInit {
    * This method refreshes the product list by applying filtering, searching, and pagination.
    */
   public applyFiltersAndSearch() {
-    this.filteredProducts = this.products;  // Start with the full list
-    this.filterCategories();                // Apply category filter
-    this.filterPriceRange();                // Apply price range filter
-    this.searchProducts();                  // Apply search term filter
-    this.paginateProducts();                // Paginate the final result
-  }
-
-  /**
-   * Filters the products based on the selected categories.
-   * 
-   * This method updates the `filteredProducts` array to include only those products
-   * whose category is selected in the `categoriesSelected` object. It first checks if 
-   * there are any selected categories. If there are, it filters the `filteredProducts`
-   * array to include only products that belong to one of the selected categories.
-   * 
-   * @private
-   */
-  private filterCategories() {
-    if (this.categoriesSelected && Object.values(this.categoriesSelected).some(isSelected => isSelected)) {
-      this.filteredProducts = this.filteredProducts.filter(p => {
-        return this.categoriesSelected && Object.entries(this.categoriesSelected)
-          .filter(([_, isSelected]) => isSelected)
-          .map(([category, _]) => category)
-          .includes(p.category);
-      });
-    }
-  }
-
-  /**
-   * Filters the products based on the selected price range.
-   * 
-   * If a price range is selected, this method will filter the `filteredProducts` array
-   * to include only those products whose price falls within the specified minimum and 
-   * maximum values.
-   * 
-   * @private
-   */
-  private filterPriceRange() {
-    if (this.priceRangeSelected) {
-      const { min, max } = this.priceRangeSelected;
-      if (min !== null && max !== null) {
-        this.filteredProducts = this.filteredProducts.filter(p => p.price >= min && p.price <= max);
-      }
-    }
+    this.currentPageProducts = this.filteringService.applyFiltersAndSearch(this.searchTerm, 
+      [{ key: 'multiselect', value: {
+        multiselect: this.categoriesSelected,
+        type: 'multiselect',
+        value: null,
+        range: null,
+        greater: null,
+        smaller: null
+      } }, 
+      { key: 'range', value: {
+        range: this.priceRangeSelected,
+        type: 'multiselect',
+        value: null,
+        greater: null,
+        smaller: null,
+        multiselect: null
+      } }]
+      , this.currentPage, this.pageSize);
+    this.totalItems = this.currentPageProducts.length;
   }
   
-  /**
-   * Filters the list of products based on the search term.
-   * If a search term is provided, it filters the products by checking if the product's
-   * name, category, or description includes the search term (case-insensitive).
-   * Updates the total number of filtered products.
-   *
-   * @private
-   */
-  private searchProducts() {
-    if (this.searchTerm) {
-      this.filteredProducts = this.filteredProducts.filter(p =>
-        p.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        p.category.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        p.description.toLowerCase().includes(this.searchTerm.toLowerCase())
-      );
-    }
-    this.totalItems = this.filteredProducts.length;
-  }
-
   /**
    * Paginates the filtered products based on the current page and page size.
    * 
@@ -165,8 +132,7 @@ class ProductListComponent implements OnInit {
    * @private
    */
   private paginateProducts() {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    this.currentPageProducts = this.filteredProducts.slice(startIndex, startIndex + this.pageSize);
+    this.currentPageProducts = this.filteringService.paginate(this.currentPage, this.pageSize);
   }
 
   /**

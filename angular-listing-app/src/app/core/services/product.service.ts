@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { Product } from '../models/product.model';
 import { PRODUCTS } from '../../mocks/products.mock';
+import { environment } from '../../../environment/environment';
 
 /**
  * @fileoverview ProductService is responsible for fetching product data.
@@ -26,6 +27,7 @@ import { PRODUCTS } from '../../mocks/products.mock';
     providedIn: 'root'
 })
 class ProductService {
+    private apiUrl = environment.apiUrl;
     constructor(private http: HttpClient) { }
 
     // For mock data
@@ -34,14 +36,27 @@ class ProductService {
      *
      * @returns {Observable<Product[]>} An observable that emits an array of products.
      */
-    public getProducts(): Observable<Product[]> {
-        return of(PRODUCTS);
+    // public getProducts(): Observable<Product[]> {
+    //     return of(PRODUCTS);
+    // }
+
+    /**
+     * Retrieves a list of products.
+     *
+     * @returns {Observable<Product[]>} An observable that emits an array of products.
+     */
+    getProducts(): Observable<Product[]> {
+      return this.http.get<Product[]>(this.apiUrl +  '/products');
     }
 
-    // For real API calls (optional)
-    // getProducts(): Observable<Product[]> {
-    //   return this.http.get<Product[]>('https://api.example.com/products');
-    // }
+    /**
+     * Retrieves the count of products.
+     *
+     * @returns {Observable<number>} An observable that emits the count of products.
+     */
+    getProductsCount(): Observable<number> {
+        return this.http.get<number>(this.apiUrl + '/products/count');
+    }
 }
 
 export { ProductService };
