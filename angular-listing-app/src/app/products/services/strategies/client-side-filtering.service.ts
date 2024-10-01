@@ -1,6 +1,6 @@
 // client-side-product.service.ts
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Filter } from '../../../core/models/filter.model';
 import { Product } from '../../../core/models/product.model';
 import { FilteringStrategy } from '../../interfaces/filtering-strategy';
@@ -59,22 +59,25 @@ class ClientSideFilteringService implements FilteringStrategy {
   // TODO: MAKE MORE GENERIC
   applyFilters(filters: {key: FilterType, value: Filter}[]): void {
     for (const filter of filters) {
-      switch (filter.key) {
+      switch (filter.value.type) {
         case 'multiselect':
           if (filter.value.multiselect) {
             this.applyCategoryFilter(filter.value.multiselect);
           }
           break;
         case 'range':
-          if (filter.value.range) {
-            this.applyPriceRangeFilter(filter.value.range);
+          if (filter.value.value) {
+            const priceRange: PriceRange = {
+              min: parseFloat(filter.value.value[0]),
+              max: parseFloat(filter.value.value[1])
+            };
+            this.applyPriceRangeFilter(priceRange);
           }
           break;
       }
     }
   }
-
-    /**
+  /**
    * Filters the products based on the selected categories.
    * 
    * This method updates the `filteredProducts` array to include only those products
@@ -84,17 +87,15 @@ class ClientSideFilteringService implements FilteringStrategy {
    * 
    * @private
    */
-    private applyCategoryFilter(categoriesSelected: { [key: string]: boolean }) {
-      if (categoriesSelected && Object.values(categoriesSelected).some(isSelected => isSelected)) {
-        this.filteredProducts = this.filteredProducts.filter(p => {
-          return categoriesSelected && Object.entries(categoriesSelected)
-            .filter(([_, isSelected]) => isSelected)
-            .map(([category, _]) => category)
-            .includes(p.category);
-        });
-      }
+  private applyCategoryFilter(categoriesSelected: { [key: string]: boolean }) {
+    const selectedCategories = Object.entries(categoriesSelected)
+      .filter(([_, isSelected]) => isSelected)
+      .map(([category, _]) => category);
+
+    if (selectedCategories.length > 0) {
+      this.filteredProducts = this.filteredProducts.filter(p => selectedCategories.includes(p.category));
     }
-  
+  }
     /**
      * Filters the products based on the selected price range.
      * 
@@ -106,10 +107,10 @@ class ClientSideFilteringService implements FilteringStrategy {
      */
     private applyPriceRangeFilter(priceRangeSelected: PriceRange) {
       if (priceRangeSelected) {
-        const { min, max } = priceRangeSelected;
-        if (min !== null && max !== null) {
-          this.filteredProducts = this.filteredProducts.filter(p => p.price >= min && p.price <= max);
-        }
+      const { min, max } = priceRangeSelected;
+      if (min !== null && max !== null) {
+        this.filteredProducts = this.filteredProducts.filter(p => p.price >= min && p.price <= max);
+      }
       }
     }
 
