@@ -13,6 +13,7 @@ This project is a full-stack application that features a product listing page wi
     - [Setup](#setup-1)
     - [Filter Strategies](#filter-strategies)
     - [Proxy Service](#proxy-service)
+    - [Deployment](#deployment)
 3. [Conclusion](#conclusion)
 
 ---
