@@ -28,11 +28,11 @@ export interface FilteringStrategy {
      * @param filters - The filters to apply.
      * @param pageNumber - The page number to retrieve.
      * @param pageSize - The number of products per page.
-     * @returns An array of products for the specified page.
+     * @returns An observable emitting an array of products for the specified page.
      * @example
-     * applyFiltersAndSearch('apple', [{ type: 'category', value: 'fruit' }], 1, 10);
+     * applyFiltersAndSearch('apple', [{ type: 'category', value: 'fruit' }], 1, 10).subscribe(products => console.log(products));
      */
-    applyFiltersAndSearch(searchTerm: string, filters: {key: FilterType, value: Filter}[], pageNumber: number, pageSize: number): Product[];
+    applyFiltersAndSearch(searchTerm: string, filters: any, pageNumber: number, pageSize: number): Observable<{products: Product[], totalItems: number}>;
 
     /**
      * Applies the given filters to the product list.
@@ -50,7 +50,7 @@ export interface FilteringStrategy {
      * Paginates the product list.
      * @param page - The page number to retrieve.
      * @param pageSize - The number of products per page.
-     * @returns An array of products for the specified page.
+     * @returns An observable emitting an array of products for the specified page.
      */
-    paginate(page: number, pageSize: number): Product[];
+    paginate(page: number, pageSize: number): Observable<Product[]>;
 }

@@ -64,9 +64,8 @@ class FilteringService {
     );
   }
 
-  applyFiltersAndSearch(searchTerm: string, filters: {key: FilterType, value: Filter}[], pageNumber: number, pageSize: number): Product[] {
-    const filteredProducts = this.strategy.applyFiltersAndSearch(searchTerm, filters, pageNumber, pageSize);
-    return filteredProducts;
+  applyFiltersAndSearch(searchTerm: string, filters: any, pageNumber: number, pageSize: number): Observable<{products: Product[], totalItems: number}> {
+    return this.strategy.applyFiltersAndSearch(searchTerm, filters, pageNumber, pageSize);
   }
 
 /**
@@ -111,11 +110,11 @@ class FilteringService {
  *
  * @param page - The current page number.
  * @param pageSize - The number of products per page.
- * @returns An array of products for the specified page.
+ * @returns An Observable that emits an array of products for the specified page.
  */
-  paginate(page: number, pageSize: number): Product[] {
-    return this.strategy.paginate(page, pageSize);
-  }
+paginate(page: number, pageSize: number): Observable<Product[]> {
+  return this.strategy.paginate(page, pageSize);
+}
 }
 
 export { FilteringService };

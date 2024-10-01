@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { Product } from '../models/product.model';
 import { PRODUCTS } from '../../mocks/products.mock';
 import { environment } from '../../../environment/environment';
+import { FilterRequestPayload } from '../../products/interfaces/filter-payload';
 
 /**
  * @fileoverview ProductService is responsible for fetching product data.
@@ -56,6 +57,16 @@ class ProductService {
      */
     getProductsCount(): Observable<number> {
         return this.http.get<number>(this.apiUrl + '/products/count');
+    }
+
+    /**
+     * Retrieves a list of filtered products.
+     *
+     * @param {FilterRequestPayload} payload The payload object.
+     * @returns {Observable<{products: Product[], totalItems: number}>} An observable that emits an object containing the products and total items.
+     */
+    getFilteredProducts(payload: FilterRequestPayload): Observable<{products: Product[], totalItems: number}> {
+        return this.http.post<{products: Product[], totalItems: number}>(this.apiUrl + '/products/filter', payload);
     }
 }
 

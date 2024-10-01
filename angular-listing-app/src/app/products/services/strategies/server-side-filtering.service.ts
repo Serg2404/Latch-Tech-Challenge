@@ -7,6 +7,7 @@ import { FilteringStrategy } from '../../interfaces/filtering-strategy';
 import { environment } from '../../../../environment/environment';
 import { ProductService } from '../../../core/services/product.service';
 import { FilterType } from '../../../core/models/filter-type.model';
+import { FilterRequestPayload } from '../../interfaces/filter-payload';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,11 @@ import { FilterType } from '../../../core/models/filter-type.model';
 class ServerSideFilteringService implements FilteringStrategy {
   private products: Product[] = [];
   private filteredProducts: Product[] = [];
+
+  private currentSearchTerm = '';
+  private currentFilters: {key: FilterType, value: Filter}[] = [];
+  private currentPage = 1;
+  private pageSize = 10;
 
   constructor(private productService: ProductService) { }
 
@@ -37,10 +43,31 @@ class ServerSideFilteringService implements FilteringStrategy {
     });
   }
 
-  applyFiltersAndSearch(searchTerm: string, filters: {key: FilterType, value: Filter}[], pageNumber: number, pageSize: number): Product[] {
-    // Server-side filtering can be passed as query parameters
-    // No direct logic required here
-    return [];
+  applyFiltersAndSearch(searchTerm: string, filters: {key: FilterType, value: Filter}[], pageNumber: number, pageSize: number): Observable<{products: Product[], totalItems: number}> {
+    this.currentSearchTerm = searchTerm;
+    this.currentFilters = filters;
+    this.currentPage = pageNumber;
+    this.pageSize = pageSize;
+
+    const payload: FilterRequestPayload = {
+      searchTerm,
+      filters: filters.map(filter => ({
+        key: filter.key,
+        values: filter.value.value ? filter.value.value : [],
+        type: filter.value.type,
+        logic: 'or'
+      })),
+      currentPage: pageNumber,
+      pageSize
+    };
+
+    return new Observable(observer => {
+      this.productService.getFilteredProducts(payload).subscribe(response => {
+        this.filteredProducts = response.products;
+        observer.next({ products: response.products, totalItems: response.totalItems });
+        observer.complete();
+      });
+    });
   }
 
   
@@ -54,9 +81,13 @@ class ServerSideFilteringService implements FilteringStrategy {
     // No direct logic required here
   }
 
-  paginate(page: number, pageSize: number): Product[] {
-    // Server-side pagination is handled via query parameters
-    return []; // No logic here, this is managed by the API
+  paginate(page: number, pageSize: number): Observable<Product[]> {
+    return new Observable(observer => {
+      this.applyFiltersAndSearch(this.currentSearchTerm, this.currentFilters, page, pageSize).subscribe(response => {
+        observer.next(response.products);
+        observer.complete();
+      });
+    });
   }
 }
 
