@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://api.yourdomain.com/api',
+    apiUrl: 'https://latch-tech-challenge.onrender.com/api',
     clientSidePaginationTreshold: 2000
   };
   
